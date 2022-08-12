@@ -16,6 +16,7 @@ app.listen(portNum, () => {
 })
 
 app.get('/', (req, res) => {
+  console.log('Website accessed on ', new Date())
   res.send()
 })
 
@@ -28,6 +29,7 @@ app.get('/toppings', (req, res) => {
         console.log(err)
         res.send('Error retrieving toppings, please try again later.')
       }
+      console.log('Toppings provided, ', result.rows, ' on ', new Date())
       res.send(result.rows)
     })
   }
@@ -37,10 +39,12 @@ app.get('/toppings', (req, res) => {
 })
 
 app.post('/toppings', (req, res) => {
+  console.log('adding ', req.body.topping, ' to toppings on ', new Date())
   try {
     db.pool.query(
       'INSERT INTO toppings(name) VALUES ($1)', [req.body.topping], (err, result) => {
         if (err) {
+          console.log(err)
           res.status(500).send()
         } else {
           res.end()
@@ -54,7 +58,7 @@ app.post('/toppings', (req, res) => {
 })
 
 app.put('/toppings', (req, res) => {
-  console.log(req.body)
+  console.log('editing topping ', req.body.index, ' to ', req.body.name, ' on ', new Date())
   try {
     db.pool.query(
       'UPDATE toppings SET name = ($1) WHERE id = ($2)', [req.body.name, req.body.index], (err, result) => {
@@ -68,7 +72,7 @@ app.put('/toppings', (req, res) => {
 })
 
 app.delete('/toppings', (req, res) => {
-  console.log(req.body.index)
+  console.log('deleting topping ', req.body.index, ' on ', new Date())
   try {
     db.pool.query(
       'DELETE FROM toppings WHERE id = ($1)', [req.body.index], (err,result) => {
@@ -90,6 +94,7 @@ app.get('/pizzas', (req, res) => {
         console.log(err)
         res.send('Error retrieving pizzas, please try again later.')
       }
+      console.log('pizzas provided ', result.rows, ' on ', new Date())
       res.send(result.rows)
     })
   }
@@ -100,6 +105,7 @@ app.get('/pizzas', (req, res) => {
 
 app.post('/pizzas', (req, res) => {
   try {
+    console.log('adding ', req.body.name, req.body.ingredients, ' to pizzas on ', new Date())
     db.pool.query(
       'INSERT INTO pizzas(name) VALUES ($1) RETURNING id', [req.body.name], (err, results) => {
         if (err) {
@@ -120,6 +126,7 @@ app.post('/pizzas', (req, res) => {
 })
 
 app.put('/pizzas', (req, res) => {
+  console.log('editing ', req.body.pizza_id, ' to ', req.body.pizza_name, ' on ', new Date())
   try {
     db.pool.query(
       'UPDATE pizzas SET name = ($1) WHERE pizzas.id = ($2)', [req.body.pizza_name, req.body.pizza_id], (err, result) => {
@@ -143,8 +150,7 @@ app.put('/pizzas', (req, res) => {
 })
 
 app.delete('/pizzas', (req, res) => {
-  console.log(req.body)
-  console.log(req.body.pizza_id)
+  console.log('deleting pizza ', req.body.pizza_id, ' on ', new Date())
   db.pool.query(
     'DELETE FROM pizzas WHERE id = ($1)', [req.body.pizza_id], (err, result) => {
       res.end()
